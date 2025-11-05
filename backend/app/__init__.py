@@ -16,7 +16,7 @@ app.url_map.strict_slashes = False
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 # OpenAPI/Swagger config
-app.config["API_TITLE"] = "My Flask API"
+app.config["API_TITLE"] = "Historical Event Trivia API"
 app.config["API_VERSION"] = "v1"
 app.config["OPENAPI_VERSION"] = "3.0.3"
 app.config["OPENAPI_URL_PREFIX"] = "/docs"
@@ -38,9 +38,7 @@ except Exception as e:
 
 # Register blueprints
 from .routes.health import blp as health_blp  # noqa: E402
+from .routes.game import blp as game_blp  # noqa: E402
 
 api.register_blueprint(health_blp)
-
-# Placeholder for future blueprints:
-# from .routes.events import blp as events_blp
-# api.register_blueprint(events_blp)
+api.register_blueprint(game_blp)
