@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional, Tuple
 import re
 import uuid
 
-from flask import request, make_response
+from flask import request, make_response, current_app
 from flask_smorest import Blueprint, abort
 from marshmallow import Schema, fields, validate
 from sqlalchemy import select
@@ -196,9 +196,9 @@ class TodayResource:
                     SESSION_COOKIE_NAME,
                     str(session.id),
                     httponly=True,
-                    samesite="Lax",
-                    secure=False,  # set to True behind HTTPS
-                    max_age=7 * 24 * 3600,
+                    samesite=current_app.config.get("COOKIE_SAMESITE", "Lax"),
+                    secure=bool(current_app.config.get("COOKIE_SECURE", False)),
+                    max_age=int(current_app.config.get("COOKIE_MAX_AGE", 7 * 24 * 3600)),
                     path="/",
                 )
             return resp
@@ -240,9 +240,9 @@ class RevealResource:
                         SESSION_COOKIE_NAME,
                         str(session.id),
                         httponly=True,
-                        samesite="Lax",
-                        secure=False,
-                        max_age=7 * 24 * 3600,
+                        samesite=current_app.config.get("COOKIE_SAMESITE", "Lax"),
+                        secure=bool(current_app.config.get("COOKIE_SECURE", False)),
+                        max_age=int(current_app.config.get("COOKIE_MAX_AGE", 7 * 24 * 3600)),
                         path="/",
                     )
                 return resp
@@ -260,9 +260,9 @@ class RevealResource:
                     SESSION_COOKIE_NAME,
                     str(session.id),
                     httponly=True,
-                    samesite="Lax",
-                    secure=False,
-                    max_age=7 * 24 * 3600,
+                    samesite=current_app.config.get("COOKIE_SAMESITE", "Lax"),
+                    secure=bool(current_app.config.get("COOKIE_SECURE", False)),
+                    max_age=int(current_app.config.get("COOKIE_MAX_AGE", 7 * 24 * 3600)),
                     path="/",
                 )
             return resp
@@ -305,9 +305,9 @@ class GuessResource:
                         SESSION_COOKIE_NAME,
                         str(session.id),
                         httponly=True,
-                        samesite="Lax",
-                        secure=False,
-                        max_age=7 * 24 * 3600,
+                        samesite=current_app.config.get("COOKIE_SAMESITE", "Lax"),
+                        secure=bool(current_app.config.get("COOKIE_SECURE", False)),
+                        max_age=int(current_app.config.get("COOKIE_MAX_AGE", 7 * 24 * 3600)),
                         path="/",
                     )
                 return resp

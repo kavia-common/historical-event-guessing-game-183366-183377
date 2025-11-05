@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_cors import CORS
 from flask_smorest import Api
@@ -13,7 +14,16 @@ except Exception:
 # Flask app setup
 app = Flask(__name__)
 app.url_map.strict_slashes = False
-CORS(app, resources={r"/*": {"origins": "*"}})
+
+# CORS configuration from environment
+# Support a comma-separated list in CORS_ALLOWED_ORIGINS; default to localhost:3000
+allowed_origins = os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:3000")
+origins = [o.strip() for o in allowed_origins.split(",") if o.strip()]
+CORS(
+    app,
+    resources={r"/*": {"origins": origins}},
+    supports_credentials=True,
+)
 
 # OpenAPI/Swagger config
 app.config["API_TITLE"] = "Historical Event Trivia API"
@@ -22,6 +32,14 @@ app.config["OPENAPI_VERSION"] = "3.0.3"
 app.config["OPENAPI_URL_PREFIX"] = "/docs"
 app.config["OPENAPI_SWAGGER_UI_PATH"] = ""
 app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
+
+# Cookie/session config propagated to routes via env variables
+app.config["COOKIE_SECURE"] = os.getenv("COOKIE_SECURE", "false").lower() == "true"
+app.config["COOKIE_SAMESITE"] = os.getenv("COOKIE_SAMESITE", "Lax")
+try:
+    app.config["COOKIE_MAX_AGE"] = int(os.getenv("COOKIE_MAX_AGE", str(7 * 24 * 3600)))
+except Exception:
+    app.config["COOKIE_MAX_AGE"] = 7 * 24 * 3600
 
 # Initialize API
 api = Api(app)
